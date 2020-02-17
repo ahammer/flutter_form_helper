@@ -64,7 +64,13 @@ Widget scrollableSimpleForm(FormHelper helper, Map<String, Widget> widgets) =>
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: helper.fields.map((f) => widgets[f.name]).toList()),
+                    children: helper.fields.map((f) {
+                      if (f.type != FieldType.Text) {
+                        return Row(children: <Widget>[Text(f.value), widgets[f.name]]);
+                      } else {
+                        return widgets[f.name];
+                      }
+                    }).toList()),
               ),
             ),
           ),

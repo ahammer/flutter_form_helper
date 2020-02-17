@@ -269,6 +269,7 @@ class FormHelperRadio extends StatelessWidget {
   Widget build(BuildContext context) => Radio(
       groupValue: formHelper._getFieldSpec(name).value,
       value: formHelper._getValue(name),
+      focusNode: formHelper._getFocusNode(name),
       onChanged: (value) => formHelper._applyRadioValue(
           name, formHelper._getFieldSpec(name).value));
 }
@@ -285,6 +286,7 @@ class FormHelperCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Checkbox(
+    focusNode: formHelper._getFocusNode(name),  
       value: formHelper._isChecked(name),
       onChanged: (value) => formHelper._toggleCheckbox(name));
 }
