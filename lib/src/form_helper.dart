@@ -7,6 +7,9 @@ import 'validators.dart';
 
 enum FieldType { Text, Radio, Checkbox }
 
+/// The results are sent in this callback
+typedef FormResultsCallback = Function(Map<String, String> results);
+
 /// Metadata to define a field
 class FieldSpec {
   /// Build a FieldSpec
@@ -45,24 +48,38 @@ class FieldSpec {
 /// Specifies a Form
 class FormHelper extends ChangeNotifier {
   /// Construct a FormHelper
-  factory FormHelper(List<FieldSpec> spec) => FormHelper._(
-      controllers: spec.fold(
-          <String, TextEditingController>{},
-          (p, v) => <String, TextEditingController>{}
-            ..addAll(p)
-            ..putIfAbsent(v.name, () => TextEditingController())),
-      focusNodes: spec.fold(
-          <String, FocusNode>{},
-          (p, v) => <String, FocusNode>{}
-            ..addAll(p)
-            ..putIfAbsent(v.name, () => FocusNode())),
-      fields: spec);
+  factory FormHelper(
+          {List<FieldSpec> spec,
+          FormResultsCallback onChanged,
+          FormResultsCallback onSubmitted}) =>
+      FormHelper._(
+          onChanged: onChanged,
+          onSubmitted: onSubmitted,
+          controllers: spec.fold(
+              <String, TextEditingController>{},
+              (p, v) => <String, TextEditingController>{}
+                ..addAll(p)
+                ..putIfAbsent(v.name, () => TextEditingController())),
+          focusNodes: spec.fold(
+              <String, FocusNode>{},
+              (p, v) => <String, FocusNode>{}
+                ..addAll(p)
+                ..putIfAbsent(v.name, () => FocusNode())),
+          fields: spec);
 
   /// Private Constructor - Init from Factory
   FormHelper._(
       {@required this.fields,
       @required this.controllers,
-      @required this.focusNodes});
+      @required this.focusNodes,
+      this.onChanged,
+      this.onSubmitted,
+      this.allowWithErrors = false});
+
+  final FormResultsCallback onChanged;
+  final FormResultsCallback onSubmitted;
+
+  final bool allowWithErrors;
 
   /// We'll dump values in here
   final valueMap = <String, String>{};
@@ -95,13 +112,11 @@ class FormHelper extends ChangeNotifier {
 
   int submissions = 0;
 
-  String _getText(String name) => _getTextEditingController(name).text;
-
   /// A count of validation errors
   int get validationErrors => fields.fold(
       0,
       (sum, field) =>
-          compositeValidator(field.validators, _getText(field.name)) == null
+          compositeValidator(field.validators, _getValue(field.name)) == null
               ? sum
               : sum + 1);
 
@@ -124,8 +139,16 @@ class FormHelper extends ChangeNotifier {
   }
 
   void _focusOnFirstRemaining() {
-    final field = fields
-        .firstWhere((field) => field.mandatory && _getText(field.name).isEmpty);
+    final field = fields.firstWhere(
+        (field) => field.mandatory && _getValue(field.name).isEmpty);
+    if (field != null) {
+      _getFocusNode(field.name).requestFocus();
+    }
+  }
+
+  void _focusOnFirstError() {
+    final field = fields.firstWhere((field) =>
+        compositeValidator(field.validators, _getValue(field.name)) != null);
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
     }
@@ -143,20 +166,21 @@ class FormHelper extends ChangeNotifier {
 
   void _onChange(String name, String value) {
     values[name] = value;
+    if (onChanged != null) onChanged(values);
     notifyListeners();
   }
 
-  /// Gets a list of TextFields for this form
-  List<Widget> getTextFields() => fields
-      .map((fs) => FormHelperTextField._(formHelper: this, name: fs.name))
-      .toList();
-
   /// Build the form
   Widget buildForm({FormUiBuilder builder = scrollableSimpleForm}) =>
-      builder(this, _buildWidgets());
+      builder(this);
 
   void _onSubmit(String name) {
-    final idx = _getFieldSpecIndex(_getFieldSpec(name));
+    final spec = _getFieldSpec(name);
+    final idx = _getFieldSpecIndex(spec);
+    if (spec.type == FieldType.Text) {
+      values[name] = _getTextEditingController(name).text;
+    }
+
     if (idx + 1 < fields.length) {
       final nextField = fields[idx + 1];
       _getFocusNode(nextField.name).requestFocus();
@@ -165,14 +189,23 @@ class FormHelper extends ChangeNotifier {
     }
   }
 
-  /// Called when the form is submitted
-  void onFormSubmit() {
+  ///
+  ///
+  void submitForm() {
     if (stillRequired > 0) {
       _focusOnFirstRemaining();
+      return;
     }
+    if (validationErrors > 0) {
+      _focusOnFirstError();
+      return;
+    }
+
+    if (onSubmitted != null) onSubmitted(values);
     notifyListeners();
   }
 
+  /*
   Map<String, Widget> _buildWidgets() => fields.fold(
       Map<String, Widget>(),
       (map, field) => <String, Widget>{
@@ -184,6 +217,7 @@ class FormHelper extends ChangeNotifier {
                         ? FormHelperCheckbox(formHelper: this, name: field.name)
                         : ("${field.name} can't inflate ${field.type}")
           }..addAll(map));
+          */
 
   String _getValue(String name) {
     final field = _getFieldSpec(name);
@@ -204,11 +238,8 @@ class FormHelper extends ChangeNotifier {
   String _getRadioDefaultValue(String group) =>
       fields.firstWhere((element) => element.group == group).value;
 
-  void _applyRadioValue(String name, value) {
-    final field = _getFieldSpec(name);
-    values[field.group] = value;
-    notifyListeners();
-  }
+  void _applyRadioValue(String name, value) =>
+      _onChange(_getFieldSpec(name).group, value);
 
   void _toggleCheckbox(String name) {
     if (values.containsKey(name)) {
@@ -220,10 +251,28 @@ class FormHelper extends ChangeNotifier {
   }
 
   bool _isChecked(String name) => values.containsKey(name);
+
+  /// Get's the Widget for a name
+  /// "submit" is a special case
+  Widget getWidget(String name) {
+    switch (_getFieldSpec(name).type) {    
+      case FieldType.Text:
+        return FormHelperTextField._(formHelper: this, name: name);
+      case FieldType.Radio:
+        return FormHelperRadio(formHelper: this, name: name);                
+      case FieldType.Checkbox:
+        return FormHelperCheckbox(formHelper: this, name: name);              
+    }
+
+    if (name=="submit") {
+
+    }
+    return Text("Uknown Type");
+  }
 }
 
 typedef FormUiBuilder = Widget Function(
-    FormHelper helper, Map<String, Widget> widgets);
+    FormHelper helper);
 
 /// A TextFormField, but with FormHelper bindings
 class FormHelperTextField extends StatelessWidget {
@@ -286,7 +335,7 @@ class FormHelperCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Checkbox(
-    focusNode: formHelper._getFocusNode(name),  
+      focusNode: formHelper._getFocusNode(name),
       value: formHelper._isChecked(name),
       onChanged: (value) => formHelper._toggleCheckbox(name));
 }

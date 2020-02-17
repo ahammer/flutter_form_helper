@@ -15,7 +15,11 @@ class FormBuilder extends StatefulWidget {
   /// form = List of fields
   /// uiBuilder = builds the ui
   const FormBuilder(
-      {@required this.form, Key key, this.uiBuilder = scrollableSimpleForm})
+      {@required this.form,
+      Key key,
+      this.uiBuilder = scrollableSimpleForm,
+      this.onFormChanged,
+      this.onFormSubmitted})
       : super(key: key);
 
   /// The list of fields in order of focus/drawing
@@ -23,6 +27,9 @@ class FormBuilder extends StatefulWidget {
 
   /// A builder for the UI, scrollable SimpleForm to start
   final FormUiBuilder uiBuilder;
+
+  final FormResultsCallback onFormChanged;
+  final FormResultsCallback onFormSubmitted;
 
   @override
   _FormBuilderState createState() => _FormBuilderState();
@@ -33,7 +40,11 @@ class _FormBuilderState extends State<FormBuilder> {
 
   @override
   void initState() {
-    helper = FormHelper(widget.form)..addListener(_refresh);
+    helper = FormHelper(
+        spec: widget.form,
+        onChanged: widget.onFormChanged,
+        onSubmitted: widget.onFormSubmitted)
+      ..addListener(_refresh);
     super.initState();
   }
 
@@ -52,8 +63,12 @@ class _FormBuilderState extends State<FormBuilder> {
       helper.buildForm(builder: widget.uiBuilder);
 }
 
-/// A builder for a default, simple, scrollable form
-Widget scrollableSimpleForm(FormHelper helper, Map<String, Widget> widgets) =>
+///
+/// This is the default "debug" form
+///
+/// It can be used to rapidly generate a form.
+///
+Widget scrollableSimpleForm(FormHelper helper) =>
     Column(
       children: <Widget>[
         Expanded(
@@ -66,9 +81,12 @@ Widget scrollableSimpleForm(FormHelper helper, Map<String, Widget> widgets) =>
                     mainAxisSize: MainAxisSize.min,
                     children: helper.fields.map((f) {
                       if (f.type != FieldType.Text) {
-                        return Row(children: <Widget>[Text(f.value), widgets[f.name]]);
+                        return Row(children: <Widget>[
+                          Text("${f.value}:${f.group ?? ""}"),
+                          helper.getWidget(f.name)
+                        ]);
                       } else {
-                        return widgets[f.name];
+                        return helper.getWidget(f.name);
                       }
                     }).toList()),
               ),
@@ -77,6 +95,6 @@ Widget scrollableSimpleForm(FormHelper helper, Map<String, Widget> widgets) =>
         ),
         RaisedButton(
             child: Text(helper.submissionButtonText),
-            onPressed: helper.onFormSubmit),
+            onPressed: helper.submitForm),
       ],
     );
