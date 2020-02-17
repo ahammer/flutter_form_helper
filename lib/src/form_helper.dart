@@ -5,23 +5,36 @@ import 'package:flutter/material.dart';
 import '../form_helper.dart';
 import 'validators.dart';
 
-/// Specifies the behavior of a field
+enum FieldType { Text, Radio, Checkbox }
+
+/// Metadata to define a field
 class FieldSpec {
   /// Build a FieldSpec
   const FieldSpec(
       {@required this.name,
-      @required this.validators,
+      this.validators = const [],
       this.mandatory = false,
+      this.value = "",
+      this.group,
+      this.type = FieldType.Text,
       this.label});
 
   /// The name of this field
   final String name;
+
+  /// The group (for RadioGroups)
+  final String group;
+
+  /// The type of the field
+  final FieldType type;
 
   /// The label for this field (name is default)
   final String label;
 
   /// Is the field Required
   final bool mandatory;
+
+  final String value;
 
   /// The Validator for this field
   /// Null if OK
@@ -50,6 +63,9 @@ class FormHelper extends ChangeNotifier {
       {@required this.fields,
       @required this.controllers,
       @required this.focusNodes});
+
+  /// We'll dump values in here
+  final valueMap = <String, String>{};
 
   /// All the fields
   final List<FieldSpec> fields;
@@ -89,7 +105,7 @@ class FormHelper extends ChangeNotifier {
               ? sum
               : sum + 1);
 
-  /// A count of how many fields are still required              
+  /// A count of how many fields are still required
   int get stillRequired => fields.fold(
       0,
       (sum, field) => field.mandatory
@@ -108,7 +124,8 @@ class FormHelper extends ChangeNotifier {
   }
 
   void _focusOnFirstRemaining() {
-    final field = fields.firstWhere((field)=>field.mandatory && _getText(field.name).isEmpty);
+    final field = fields
+        .firstWhere((field) => field.mandatory && _getText(field.name).isEmpty);
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
     }
@@ -159,9 +176,50 @@ class FormHelper extends ChangeNotifier {
   Map<String, Widget> _buildWidgets() => fields.fold(
       Map<String, Widget>(),
       (map, field) => <String, Widget>{
-            field.name:
-                FormHelperTextField._(formHelper: this, name: field.name)
+            field.name: field.type == FieldType.Text
+                ? FormHelperTextField._(formHelper: this, name: field.name)
+                : field.type == FieldType.Radio
+                    ? FormHelperRadio(formHelper: this, name: field.name)
+                    : field.type == FieldType.Checkbox
+                        ? FormHelperCheckbox(formHelper: this, name: field.name)
+                        : ("${field.name} can't inflate ${field.type}")
           }..addAll(map));
+
+  String _getValue(String name) {
+    final field = _getFieldSpec(name);
+    switch (field.type) {
+      case FieldType.Text:
+        return _getTextEditingController(name).text;
+      case FieldType.Radio:
+        if (!values.containsKey(field.group)) {
+          return _getRadioDefaultValue(field.group);
+        }
+        return values[field.group];
+      case FieldType.Checkbox:
+        return "";
+    }
+    return "";
+  }
+
+  String _getRadioDefaultValue(String group) =>
+      fields.firstWhere((element) => element.group == group).value;
+
+  void _applyRadioValue(String name, value) {
+    final field = _getFieldSpec(name);
+    values[field.group] = value;
+    notifyListeners();
+  }
+
+  void _toggleCheckbox(String name) {
+    if (values.containsKey(name)) {
+      values.remove(name);
+    } else {
+      values[name] = _getFieldSpec(name).value;
+    }
+    notifyListeners();
+  }
+
+  bool _isChecked(String name) => values.containsKey(name);
 }
 
 typedef FormUiBuilder = Widget Function(
@@ -195,4 +253,38 @@ class FormHelperTextField extends StatelessWidget {
             errorText: compositeValidator(fieldSpec.validators,
                 formHelper._getTextEditingController(name).text)));
   }
+}
+
+class FormHelperRadio extends StatelessWidget {
+  const FormHelperRadio({Key key, this.formHelper, this.name})
+      : super(key: key);
+
+  /// The Form Helper
+  final FormHelper formHelper;
+
+  /// The name of the field
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => Radio(
+      groupValue: formHelper._getFieldSpec(name).value,
+      value: formHelper._getValue(name),
+      onChanged: (value) => formHelper._applyRadioValue(
+          name, formHelper._getFieldSpec(name).value));
+}
+
+class FormHelperCheckbox extends StatelessWidget {
+  const FormHelperCheckbox({Key key, this.formHelper, this.name})
+      : super(key: key);
+
+  /// The Form Helper
+  final FormHelper formHelper;
+
+  /// The name of the field
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => Checkbox(
+      value: formHelper._isChecked(name),
+      onChanged: (value) => formHelper._toggleCheckbox(name));
 }
