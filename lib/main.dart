@@ -3,6 +3,7 @@ import 'package:flutter_form_helper/form_helper.dart';
 
 void main() => runApp(FormTestApp());
 
+/// Sample Form
 class FormTestApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -18,7 +19,4 @@ const testFormFields = <FieldSpec>[
   FieldSpec(name: "required", mandatory: true, validators: [lengthValidator]),
   FieldSpec(name: "optional", mandatory: false, validators: [lengthValidator]),
   FieldSpec(name: "number", mandatory: true, validators: [intValidator]),
-  
-
-
-];
+]; 

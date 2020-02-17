@@ -7,8 +7,6 @@ import 'validators.dart';
 
 /// Specifies the behavior of a field
 class FieldSpec {
-
-  
   /// Build a FieldSpec
   const FieldSpec(
       {@required this.name,
@@ -81,7 +79,40 @@ class FormHelper extends ChangeNotifier {
 
   int submissions = 0;
 
-  String get submissionButtonText => "Hello World $submissions";
+  String _getText(String name) => _getTextEditingController(name).text;
+
+  /// A count of validation errors
+  int get validationErrors => fields.fold(
+      0,
+      (sum, field) =>
+          compositeValidator(field.validators, _getText(field.name)) == null
+              ? sum
+              : sum + 1);
+
+  /// A count of how many fields are still required              
+  int get stillRequired => fields.fold(
+      0,
+      (sum, field) => field.mandatory
+          ? _getTextEditingController(field.name).text.isEmpty ? sum + 1 : sum
+          : sum);
+
+  String get submissionButtonText {
+    if (stillRequired > 0) {
+      return "$stillRequired fields remaining";
+    }
+
+    if (validationErrors > 0) {
+      return "$validationErrors field doesn't validate";
+    }
+    return "Submit Form";
+  }
+
+  void _focusOnFirstRemaining() {
+    final field = fields.firstWhere((field)=>field.mandatory && _getText(field.name).isEmpty);
+    if (field != null) {
+      _getFocusNode(field.name).requestFocus();
+    }
+  }
 
   @override
   void dispose() {
@@ -105,7 +136,7 @@ class FormHelper extends ChangeNotifier {
 
   /// Build the form
   Widget buildForm({FormUiBuilder builder = scrollableSimpleForm}) =>
-      builder(this);
+      builder(this, _buildWidgets());
 
   void _onSubmit(String name) {
     final idx = _getFieldSpecIndex(_getFieldSpec(name));
@@ -119,12 +150,22 @@ class FormHelper extends ChangeNotifier {
 
   /// Called when the form is submitted
   void onFormSubmit() {
-    submissions++;
+    if (stillRequired > 0) {
+      _focusOnFirstRemaining();
+    }
     notifyListeners();
   }
+
+  Map<String, Widget> _buildWidgets() => fields.fold(
+      Map<String, Widget>(),
+      (map, field) => <String, Widget>{
+            field.name:
+                FormHelperTextField._(formHelper: this, name: field.name)
+          }..addAll(map));
 }
 
-typedef FormUiBuilder = Widget Function(FormHelper helper);
+typedef FormUiBuilder = Widget Function(
+    FormHelper helper, Map<String, Widget> widgets);
 
 /// A TextFormField, but with FormHelper bindings
 class FormHelperTextField extends StatelessWidget {
@@ -145,14 +186,13 @@ class FormHelperTextField extends StatelessWidget {
     final label = fieldSpec.label ?? name;
 
     return TextFormField(
-      onChanged: (value) => formHelper._onChange(name, value),
-      onFieldSubmitted: (value) => formHelper._onSubmit(name),
-      focusNode: formHelper._getFocusNode(name),
-      controller: formHelper._getTextEditingController(name),
-      decoration: InputDecoration(
-          labelText: fieldSpec.mandatory? "* $label":label,
-          errorText: compositeValidator(
-              fieldSpec.validators,
-              formHelper._getTextEditingController(name).text)));
+        onChanged: (value) => formHelper._onChange(name, value),
+        onFieldSubmitted: (value) => formHelper._onSubmit(name),
+        focusNode: formHelper._getFocusNode(name),
+        controller: formHelper._getTextEditingController(name),
+        decoration: InputDecoration(
+            labelText: fieldSpec.mandatory ? "* $label" : label,
+            errorText: compositeValidator(fieldSpec.validators,
+                formHelper._getTextEditingController(name).text)));
   }
 }

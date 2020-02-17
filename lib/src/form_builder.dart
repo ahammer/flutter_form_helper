@@ -53,7 +53,8 @@ class _FormBuilderState extends State<FormBuilder> {
 }
 
 /// A builder for a default, simple, scrollable form
-Widget scrollableSimpleForm(FormHelper helper) => Column(
+Widget scrollableSimpleForm(FormHelper helper, Map<String, Widget> widgets) =>
+    Column(
       children: <Widget>[
         Expanded(
           child: Card(
@@ -63,7 +64,7 @@ Widget scrollableSimpleForm(FormHelper helper) => Column(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: helper.getTextFields()),
+                    children: helper.fields.map((f) => widgets[f.name]).toList()),
               ),
             ),
           ),
