@@ -1,31 +1,21 @@
-import 'package:flutter/widgets.dart';
-
 import '../form_helper.dart';
 
-typedef validator = String Function(FormHelper helper, String input,
-    {String defaultOutput});
-
-///
-/// Validators
-///
-/// These are used to validate the input as it's typed and show error messages
-///
-/// When it's OK, you should pass through the "defaultOutput" as that may
-/// be another error
-
-///
-/// Composes a list of validators
-///
-/// They'll apply in order, only one will pass it's output through
+/// Composite Validator
+/// 
+/// Composes and folds together multiple validators
+/// Applies the list of Validators in order
 String compositeValidator(
-        List<validator> validators, FormHelper helper, String input) =>
+        List<Validator> validators, FormHelper helper, String input) =>
     input != null && input.isNotEmpty
         ? validators.fold(
             null, (output, v) => v(helper, input, defaultOutput: output))
         : null;
 
-/// Validate a form is a certain length
+
+/// Length Validator
 ///
+/// By default validates at least 3 characters entered
+/// Can be customized as necessary
 String lengthValidator(
   FormHelper helper,
   String input, {
@@ -34,10 +24,15 @@ String lengthValidator(
   String defaultOutput,
 }) =>
     input == null || (input.length < minLength || input.length > maxLength)
-        ? "$minLength Characters or more Required"
+        ? "$minLength characters or more Required"
         : defaultOutput;
 
-/// Does not like when no spaces are available
+
+/// Space Count Validator
+/// 
+/// Ensures the correct amount of spaces in a string
+/// By default, no spaces, but can be configured to allow
+/// as many words as you want.
 String spaceCountValidator(FormHelper helper, String input,
         {String defaultOutput,
         int count = 0,
@@ -46,20 +41,29 @@ String spaceCountValidator(FormHelper helper, String input,
         ? message
         : defaultOutput;
 
-/// Validates an email
+
+/// Email Validator
+/// 
+/// Validates an email address against a regex
 String emailValidator(FormHelper helper, String input,
         {String defaultOutput}) =>
     input == null || !_emailPattern.hasMatch(input)
         ? "Please enter a email"
         : defaultOutput;
 
-/// Validates an email
+
+/// URL Validator
+/// 
+/// Validates that a URL was entered correctly
 String urlValidator(FormHelper helper, String input, {String defaultOutput}) =>
     input == null || !_urlPattern.hasMatch(input)
         ? "Please enter a URL"
         : defaultOutput;
 
-/// Validates that the value parses to double
+
+/// Double Validator
+/// 
+/// Validates that text can be parsed to a double
 String doubleValidator(FormHelper helper, String input,
     {String defaultOutput}) {
   try {
@@ -70,7 +74,10 @@ String doubleValidator(FormHelper helper, String input,
   return defaultOutput;
 }
 
-/// Validates that the value parses to an int
+
+/// Int Validator
+/// 
+/// Validates that text can be parsed to an Int
 String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   try {
     double.parse(input);
@@ -80,6 +87,8 @@ String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   return defaultOutput;
 }
 
+
+/// Regex Patterns for URL & Email
 final _urlPattern =
     RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');
 final _emailPattern = RegExp(

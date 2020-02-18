@@ -50,7 +50,7 @@ class FieldSpec {
   /// The Validator for this field
   /// Null if OK
   /// Text if Error
-  final List<validator> validators;
+  final List<Validator> validators;
 }
 
 /// Specifies a Form
@@ -110,7 +110,7 @@ class FormHelper extends ChangeNotifier {
   int get validationErrors => fields.fold(
       0,
       (sum, field) =>
-          compositeValidator(field.validators, this, _getValue(field.name)) ==
+          compositeValidator(field.validators, this, getValue(field.name)) ==
                   null
               ? sum
               : sum + 1);
@@ -198,7 +198,7 @@ class FormHelper extends ChangeNotifier {
   /// Used when user taps "submit" without completing the form
   void _focusOnFirstRemaining() {
     final field = fields.firstWhere(
-        (field) => field.mandatory && _getValue(field.name).isEmpty);
+        (field) => field.mandatory && getValue(field.name).isEmpty);
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
     }
@@ -208,7 +208,7 @@ class FormHelper extends ChangeNotifier {
   /// Used when user taps "submit" with errors detected in input
   void _focusOnFirstError() {
     final field = fields.firstWhere((field) =>
-        compositeValidator(field.validators, this, _getValue(field.name)) !=
+        compositeValidator(field.validators, this, getValue(field.name)) !=
         null);
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
@@ -259,7 +259,7 @@ class FormHelper extends ChangeNotifier {
   /// Gets the current value for a field by name
   /// Radio buttons get value by Group name
   /// and default to a value = to the first option listed
-  String _getValue(String name) {
+  String getValue(String name) {
     final field = _getFieldSpec(name);
     if (field.type == FieldType.radio) {
       if (!values.containsKey(field.group)) {
@@ -334,7 +334,7 @@ class _RadioButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Radio<String>(
       groupValue: formHelper._getFieldSpec(name).value,
-      value: formHelper._getValue(name),
+      value: formHelper.getValue(name),
       focusNode: formHelper._getFocusNode(name),
       onChanged: (value) => formHelper._applyRadioValue(
           name, formHelper._getFieldSpec(name).value));
