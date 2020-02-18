@@ -20,6 +20,7 @@ class FieldSpec {
       {@required this.name,
       this.validators = const [],
       this.mandatory = false,
+      this.obscureText = false,
       this.value = "",
       this.group,
       this.type = FieldType.text,
@@ -39,6 +40,9 @@ class FieldSpec {
 
   /// Is the field Required
   final bool mandatory;
+
+  /// Should this field be masked if possible?
+  final bool obscureText;
 
   /// The value of this field
   final String value;
@@ -296,9 +300,11 @@ class _TextField extends StatelessWidget {
     final label = fieldSpec.label ?? name;
 
     return TextFormField(
+        obscureText: fieldSpec.obscureText,
         onChanged: (value) => formHelper._onChange(name, value),
         onFieldSubmitted: (value) => formHelper._onSubmit(name),
         focusNode: formHelper._getFocusNode(name),
+        
         controller: formHelper._getTextEditingController(name),
         decoration: InputDecoration(
             labelText: fieldSpec.mandatory ? "* $label" : label,

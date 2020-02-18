@@ -37,6 +37,12 @@ const testFormFields = <FieldSpec>[
       mandatory: false),
 
   FieldSpec(
+      name: "Password", 
+      mandatory: false,
+      obscureText: true
+      ),
+
+  FieldSpec(
       name: "Email", 
       mandatory: false, 
       validators:[emailValidator]),

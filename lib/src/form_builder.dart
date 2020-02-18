@@ -69,7 +69,9 @@ class _FormBuilderState extends State<FormBuilder> {
 ///
 /// This is the default "debug" form
 ///
-/// It can be used to rapidly generate a form.
+/// It can be used to rapidly generate a form, and is the default.
+/// 
+/// It's assumed you'll implement your own form however.
 ///
 Widget scrollableSimpleForm(FormHelper helper) => Column(
       children: <Widget>[
@@ -84,7 +86,7 @@ Widget scrollableSimpleForm(FormHelper helper) => Column(
                     children: helper.fields.map((f) {
                       if (f.type != FieldType.text) {
                         return Row(children: <Widget>[
-                          Text("${f.value}:${f.group ?? ""}"),
+                          Text("${f.group ?? ""} ${f.value}"),
                           helper.getWidget(f.name)
                         ]);
                       } else {
