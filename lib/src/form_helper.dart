@@ -14,9 +14,9 @@ enum FieldType {
 }
 
 /// Metadata to define a field
-class FieldSpec {
+class Field {
   /// Build a FieldSpec
-  const FieldSpec(
+  const Field(
       {@required this.name,
       this.validators = const [],
       this.mandatory = false,
@@ -57,7 +57,7 @@ class FieldSpec {
 class FormHelper extends ChangeNotifier {
   /// Construct a FormHelper
   factory FormHelper(
-          {List<FieldSpec> spec,
+          {List<Field> spec,
           FormResultsCallback onChanged,
           FormResultsCallback onSubmitted}) =>
       FormHelper._(
@@ -95,7 +95,7 @@ class FormHelper extends ChangeNotifier {
   final bool allowWithErrors;
 
   /// All the fields
-  final List<FieldSpec> fields;
+  final List<Field> fields;
 
   /// All the controllers
   final Map<String, TextEditingController> controllers;
@@ -216,11 +216,11 @@ class FormHelper extends ChangeNotifier {
   }
 
   /// Gets a field spec
-  FieldSpec _getFieldSpec(String name) =>
+  Field _getFieldSpec(String name) =>
       fields.firstWhere((element) => element.name == name);
 
   /// Gets a field spec
-  int _getFieldSpecIndex(FieldSpec fieldSpec) => fields.indexOf(fieldSpec);
+  int _getFieldSpecIndex(Field fieldSpec) => fields.indexOf(fieldSpec);
 
   /// Get a focus node for a named field
   FocusNode _getFocusNode(String name) => focusNodes[name];

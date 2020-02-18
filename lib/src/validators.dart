@@ -37,7 +37,7 @@ String spaceCountValidator(FormHelper helper, String input,
         {String defaultOutput,
         int count = 0,
         String message = "No Spaces Allowed"}) =>
-    input != null && " ".allMatches(input).length == count
+    input != null && " ".allMatches(input).length != count
         ? message
         : defaultOutput;
 

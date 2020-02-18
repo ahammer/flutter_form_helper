@@ -23,7 +23,7 @@ class FormBuilder extends StatefulWidget {
       : super(key: key);
 
   /// The list of fields in order of focus/drawing
-  final List<FieldSpec> form;
+  final List<Field> form;
 
   /// A builder for the UI, scrollable SimpleForm to start
   final FormUiBuilder uiBuilder;
