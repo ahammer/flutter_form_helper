@@ -3,37 +3,51 @@ import 'package:flutter_form_helper/form_helper.dart';
 /// This is the Sample Form used on the main() page
 const sampleForm = <FieldSpec>[
   FieldSpec(
-      name: "Name", 
+      name: "name", 
+      label: "Name",
       mandatory: true, 
       validators: [lengthValidator]),
 
   FieldSpec(
-      name: "Title", 
+      name: "title",
+      label: "Title", 
       mandatory: false),
 
   FieldSpec(
-      name: "Password", 
+      name: "password", 
+      label: "Password", 
+      mandatory: false,
+      obscureText: true
+      ),
+
+      
+  FieldSpec(
+      name: "repeat_password", 
+      label: "Repeat Password", 
       mandatory: false,
       obscureText: true
       ),
 
   FieldSpec(
-      name: "Email", 
+      name: "email", 
+      label: "Email", 
       mandatory: false, 
       validators:[emailValidator]),
 
   FieldSpec(
-      name: "Url", 
+      name: "url", 
+      label: "Url", 
       mandatory: false, 
       validators: [urlValidator]),
 
   FieldSpec(
-    name: "Age", 
+    name: "age", 
+    label: "Age", 
     mandatory: true, 
     validators: [intValidator]),
 
   FieldSpec(
-      name: "radio1",
+      name: "radio1",      
       group: "Pronoun",
       value: "He",
       type: FieldType.radio),

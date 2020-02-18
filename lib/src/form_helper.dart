@@ -145,8 +145,9 @@ class FormHelper extends ChangeNotifier {
   }
 
   /// Build the form
-  Widget buildForm({FormUiBuilder builder = scrollableSimpleForm}) =>
-      builder(this);
+  Widget buildForm(BuildContext context,
+          {FormUiBuilder builder = scrollableSimpleForm}) =>
+      builder(this, context);
 
   /// Get's the Widget for a name
   /// "submit" is a special case
@@ -173,9 +174,9 @@ class FormHelper extends ChangeNotifier {
   /// It'll redirect you to required fields or to fix errors
   /// before submitting
   void submitForm() {
-    if (allowWithErrors && onSubmitted != null) {    
+    if (allowWithErrors && onSubmitted != null) {
       onSubmitted(values);
-      return;    
+      return;
     }
 
     if (stillRequired > 0) {

@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_helper/form_helper.dart';
-import 'sample_form.dart';
+import 'src/custom_form_builder.dart';
+import 'src/sample_form.dart';
 
 /// A key to the Scaffold Root
 /// Allows me to wire up dialogs easily
@@ -12,9 +13,9 @@ void main() {
   runApp(FormTestApp());
 }
 
-/// This is the demo app for the Flutter Form Widget
-class FormTestApp extends StatefulWidget {
-  // This widget is the root of your application.
+///
+/// Form Testing App, Sample Project
+class FormTestApp extends StatefulWidget {  
   @override
   _FormTestAppState createState() => _FormTestAppState();
 }
@@ -52,8 +53,15 @@ class _FormTestAppState extends State<FormTestApp>
                   ],
                 ),
                 Expanded(
-                    child: FormBuilder(
-                        form: sampleForm, onFormSubmitted: resultsCallback)),
+                    child:
+                        TabBarView(controller: controller, children: <Widget>[
+                  FormBuilder(
+                      form: sampleForm, onFormSubmitted: resultsCallback),
+                  FormBuilder(
+                      form: sampleForm,
+                      onFormSubmitted: resultsCallback,
+                      uiBuilder: customFormBuilder),
+                ])),
               ],
             ))),
       );

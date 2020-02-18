@@ -63,7 +63,7 @@ class _FormBuilderState extends State<FormBuilder> {
 
   @override
   Widget build(BuildContext context) =>
-      helper.buildForm(builder: widget.uiBuilder);
+      helper.buildForm(context, builder: widget.uiBuilder);
 }
 
 ///
@@ -73,7 +73,7 @@ class _FormBuilderState extends State<FormBuilder> {
 /// 
 /// It's assumed you'll implement your own form however.
 ///
-Widget scrollableSimpleForm(FormHelper helper) => Column(
+Widget scrollableSimpleForm(FormHelper helper, BuildContext context) => Column(
       children: <Widget>[
         Expanded(
           child: Card(
