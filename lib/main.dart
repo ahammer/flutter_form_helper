@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_helper/form_helper.dart';
+import 'form_helper.dart';
 
-final kScaffoldKey = GlobalKey();
+/// A key to the Scaffold Root
+/// Allows me to wire up dialogs easily
+final GlobalKey _scaffoldKey = GlobalKey();
 
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
@@ -16,36 +18,47 @@ class FormTestApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         title: 'Flutter Form Demo',
         home: Scaffold(
-            key: kScaffoldKey,
+            key: _scaffoldKey,
             body: const SafeArea(
                 child: FormBuilder(
                     form: testFormFields, onFormSubmitted: resultsCallback))),
       );
 }
 
+/// This is the Sample Form used on the main() page
 const testFormFields = <FieldSpec>[
   FieldSpec(
-      name: "RequiredField", mandatory: true, validators: [lengthValidator]),
+      name: "Name", mandatory: true, validators: [lengthValidator]),
   FieldSpec(
-      name: "OptionalField", mandatory: false, validators: [lengthValidator]),
-  FieldSpec(name: "IntegerField", mandatory: true, validators: [intValidator]),
+      name: "Title", mandatory: false),
+  FieldSpec(name: "Age", mandatory: true, validators: [intValidator]),
   FieldSpec(
       name: "radio1",
-      group: "RadioGroup1",
-      value: "true",
-      type: FieldType.Radio),
+      group: "Pronoun",
+      value: "He",
+      type: FieldType.radio),
   FieldSpec(
       name: "radio2",
-      group: "RadioGroup1",
-      value: "false",
-      type: FieldType.Radio),
-  FieldSpec(name: "checkbox", value: "checked", type: FieldType.Checkbox)
+      group: "Pronoun",
+      value: "She",
+      type: FieldType.radio),
+  FieldSpec(
+      name: "radio3",
+      group: "Pronoun",
+      value: "They",
+      type: FieldType.radio),
+      
+  FieldSpec(name: "checkbox", value: "checked", type: FieldType.checkbox)
 ];
 
 /// We are going to send the results here
-void resultsCallback(Map<String, String> results) => showDialog(
-    context: kScaffoldKey.currentContext,
+void resultsCallback(Map<String, String> results) => showDialog<void>(
+    context: _scaffoldKey.currentContext,
     builder: (context) => Padding(
-          padding: const EdgeInsets.all(64.0),
-          child: Card(child: Text(results.keys.fold("", (previousValue, element) => "$previousValue$element = ${results[element]}\n"))),
+          padding: const EdgeInsets.all(64),
+          child: Card(
+              child: Text(results.keys.fold(
+                  "",
+                  (previousValue, element) =>
+                      "$previousValue$element = ${results[element]}\n"))),
         ));

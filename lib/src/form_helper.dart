@@ -1,14 +1,17 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import '../form_helper.dart';
-import 'validators.dart';
 
-enum FieldType { Text, Radio, Checkbox }
+/// The types of fields we support
+enum FieldType {
+  /// Text Fields
+  text,
 
-/// The results are sent in this callback
-typedef FormResultsCallback = Function(Map<String, String> results);
+  /// Radio Buttons
+  radio,
+
+  /// Checkboxes
+  checkbox
+}
 
 /// Metadata to define a field
 class FieldSpec {
@@ -19,7 +22,7 @@ class FieldSpec {
       this.mandatory = false,
       this.value = "",
       this.group,
-      this.type = FieldType.Text,
+      this.type = FieldType.text,
       this.label});
 
   /// The name of this field
@@ -37,6 +40,7 @@ class FieldSpec {
   /// Is the field Required
   final bool mandatory;
 
+  /// The value of this field
   final String value;
 
   /// The Validator for this field
@@ -76,13 +80,15 @@ class FormHelper extends ChangeNotifier {
       this.onSubmitted,
       this.allowWithErrors = false});
 
+  /// Called when the form is changed
   final FormResultsCallback onChanged;
+
+  /// Called when the form is submitted
   final FormResultsCallback onSubmitted;
 
+  /// Allow callbacks when there is errors present
+  /// (missing fields or validation errors)
   final bool allowWithErrors;
-
-  /// We'll dump values in here
-  final valueMap = <String, String>{};
 
   /// All the fields
   final List<FieldSpec> fields;
@@ -110,8 +116,6 @@ class FormHelper extends ChangeNotifier {
   TextEditingController _getTextEditingController(String name) =>
       controllers[name];
 
-  int submissions = 0;
-
   /// A count of validation errors
   int get validationErrors => fields.fold(
       0,
@@ -127,6 +131,8 @@ class FormHelper extends ChangeNotifier {
           ? _getTextEditingController(field.name).text.isEmpty ? sum + 1 : sum
           : sum);
 
+  /// Returns auto-generated submission button text
+  /// It'll indicate errors with the form
   String get submissionButtonText {
     if (stillRequired > 0) {
       return "$stillRequired fields remaining";
@@ -138,6 +144,8 @@ class FormHelper extends ChangeNotifier {
     return "Submit Form";
   }
 
+  /// Focus on the first remaining mandatory field
+  /// Used when user taps "submit" without completing the form
   void _focusOnFirstRemaining() {
     final field = fields.firstWhere(
         (field) => field.mandatory && _getValue(field.name).isEmpty);
@@ -146,6 +154,8 @@ class FormHelper extends ChangeNotifier {
     }
   }
 
+  /// Focus on the first error in the form
+  /// Used when user taps "submit" with errors detected in input
   void _focusOnFirstError() {
     final field = fields.firstWhere((field) =>
         compositeValidator(field.validators, _getValue(field.name)) != null);
@@ -154,6 +164,7 @@ class FormHelper extends ChangeNotifier {
     }
   }
 
+  /// Dispose this form
   @override
   void dispose() {
     this
@@ -162,11 +173,13 @@ class FormHelper extends ChangeNotifier {
     super.dispose();
   }
 
-  /// Dispose this form
-
+  /// Called every time a value is changed
   void _onChange(String name, String value) {
     values[name] = value;
-    if (onChanged != null) onChanged(values);
+    if (onChanged != null) {
+      /// Todo allow errors
+      onChanged(values);
+    }
     notifyListeners();
   }
 
@@ -177,7 +190,7 @@ class FormHelper extends ChangeNotifier {
   void _onSubmit(String name) {
     final spec = _getFieldSpec(name);
     final idx = _getFieldSpecIndex(spec);
-    if (spec.type == FieldType.Text) {
+    if (spec.type == FieldType.text) {
       values[name] = _getTextEditingController(name).text;
     }
 
@@ -189,8 +202,10 @@ class FormHelper extends ChangeNotifier {
     }
   }
 
+  /// Call this when you want to "Submit" the form
   ///
-  ///
+  /// It'll redirect you to required fields or to fix errors
+  /// before submitting
   void submitForm() {
     if (stillRequired > 0) {
       _focusOnFirstRemaining();
@@ -201,35 +216,25 @@ class FormHelper extends ChangeNotifier {
       return;
     }
 
-    if (onSubmitted != null) onSubmitted(values);
+    if (onSubmitted != null) {
+      onSubmitted(values);
+    }
     notifyListeners();
   }
 
-  /*
-  Map<String, Widget> _buildWidgets() => fields.fold(
-      Map<String, Widget>(),
-      (map, field) => <String, Widget>{
-            field.name: field.type == FieldType.Text
-                ? FormHelperTextField._(formHelper: this, name: field.name)
-                : field.type == FieldType.Radio
-                    ? FormHelperRadio(formHelper: this, name: field.name)
-                    : field.type == FieldType.Checkbox
-                        ? FormHelperCheckbox(formHelper: this, name: field.name)
-                        : ("${field.name} can't inflate ${field.type}")
-          }..addAll(map));
-          */
-
+  /// Gets the current value for a field
+  /// Maybe not needed anymore
   String _getValue(String name) {
     final field = _getFieldSpec(name);
     switch (field.type) {
-      case FieldType.Text:
+      case FieldType.text:
         return _getTextEditingController(name).text;
-      case FieldType.Radio:
+      case FieldType.radio:
         if (!values.containsKey(field.group)) {
           return _getRadioDefaultValue(field.group);
         }
         return values[field.group];
-      case FieldType.Checkbox:
+      case FieldType.checkbox:
         return "";
     }
     return "";
@@ -238,7 +243,7 @@ class FormHelper extends ChangeNotifier {
   String _getRadioDefaultValue(String group) =>
       fields.firstWhere((element) => element.group == group).value;
 
-  void _applyRadioValue(String name, value) =>
+  void _applyRadioValue(String name, String value) =>
       _onChange(_getFieldSpec(name).group, value);
 
   void _toggleCheckbox(String name) {
@@ -255,30 +260,32 @@ class FormHelper extends ChangeNotifier {
   /// Get's the Widget for a name
   /// "submit" is a special case
   Widget getWidget(String name) {
-    switch (_getFieldSpec(name).type) {    
-      case FieldType.Text:
-        return FormHelperTextField._(formHelper: this, name: name);
-      case FieldType.Radio:
-        return FormHelperRadio(formHelper: this, name: name);                
-      case FieldType.Checkbox:
-        return FormHelperCheckbox(formHelper: this, name: name);              
+    switch (_getFieldSpec(name).type) {
+      case FieldType.text:
+        return _TextField._(formHelper: this, name: name);
+      case FieldType.radio:
+        return _RadioButton(formHelper: this, name: name);
+      case FieldType.checkbox:
+        return _CheckBox(formHelper: this, name: name);
     }
 
-    if (name=="submit") {
-
+    if (name == "submit") {
+      return RaisedButton(
+          onPressed: submitForm, child: Text(submissionButtonText));
     }
-    return Text("Uknown Type");
+
+    return const Text("Uknown Type");
   }
 }
 
-typedef FormUiBuilder = Widget Function(
-    FormHelper helper);
-
-/// A TextFormField, but with FormHelper bindings
-class FormHelperTextField extends StatelessWidget {
+/// Field Bindings for the helper
+///
+/// When you call getWidget(String name) on FormHelper
+/// one of these following widgets will be put in it's place
+///
+class _TextField extends StatelessWidget {
   /// Construct a text form helper
-  const FormHelperTextField._(
-      {@required this.formHelper, @required this.name, Key key})
+  const _TextField._({@required this.formHelper, @required this.name, Key key})
       : super(key: key);
 
   /// The Form Helper
@@ -304,9 +311,8 @@ class FormHelperTextField extends StatelessWidget {
   }
 }
 
-class FormHelperRadio extends StatelessWidget {
-  const FormHelperRadio({Key key, this.formHelper, this.name})
-      : super(key: key);
+class _RadioButton extends StatelessWidget {
+  const _RadioButton({Key key, this.formHelper, this.name}) : super(key: key);
 
   /// The Form Helper
   final FormHelper formHelper;
@@ -315,7 +321,7 @@ class FormHelperRadio extends StatelessWidget {
   final String name;
 
   @override
-  Widget build(BuildContext context) => Radio(
+  Widget build(BuildContext context) => Radio<String>(
       groupValue: formHelper._getFieldSpec(name).value,
       value: formHelper._getValue(name),
       focusNode: formHelper._getFocusNode(name),
@@ -323,9 +329,8 @@ class FormHelperRadio extends StatelessWidget {
           name, formHelper._getFieldSpec(name).value));
 }
 
-class FormHelperCheckbox extends StatelessWidget {
-  const FormHelperCheckbox({Key key, this.formHelper, this.name})
-      : super(key: key);
+class _CheckBox extends StatelessWidget {
+  const _CheckBox({Key key, this.formHelper, this.name}) : super(key: key);
 
   /// The Form Helper
   final FormHelper formHelper;

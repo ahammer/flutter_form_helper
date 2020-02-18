@@ -28,7 +28,10 @@ class FormBuilder extends StatefulWidget {
   /// A builder for the UI, scrollable SimpleForm to start
   final FormUiBuilder uiBuilder;
 
+  /// Called every time the form is changed
   final FormResultsCallback onFormChanged;
+
+  /// Called when the submit button is pressed and fields are validated
   final FormResultsCallback onFormSubmitted;
 
   @override
@@ -68,8 +71,7 @@ class _FormBuilderState extends State<FormBuilder> {
 ///
 /// It can be used to rapidly generate a form.
 ///
-Widget scrollableSimpleForm(FormHelper helper) =>
-    Column(
+Widget scrollableSimpleForm(FormHelper helper) => Column(
       children: <Widget>[
         Expanded(
           child: Card(
@@ -80,7 +82,7 @@ Widget scrollableSimpleForm(FormHelper helper) =>
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: helper.fields.map((f) {
-                      if (f.type != FieldType.Text) {
+                      if (f.type != FieldType.text) {
                         return Row(children: <Widget>[
                           Text("${f.value}:${f.group ?? ""}"),
                           helper.getWidget(f.name)
@@ -93,8 +95,6 @@ Widget scrollableSimpleForm(FormHelper helper) =>
             ),
           ),
         ),
-        RaisedButton(
-            child: Text(helper.submissionButtonText),
-            onPressed: helper.submitForm),
+        helper.getWidget("submit")
       ],
     );
