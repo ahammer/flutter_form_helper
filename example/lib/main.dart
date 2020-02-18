@@ -13,9 +13,15 @@ void main() {
   runApp(FormTestApp());
 }
 
-///
 /// Form Testing App, Sample Project
-class FormTestApp extends StatefulWidget {  
+///
+/// This widget has a Tab bar that let's you switch between
+/// 2 presentations of the same form
+///
+/// 1) The simple auto-generated form
+/// 2) A custom form presentation
+///
+class FormTestApp extends StatefulWidget {
   @override
   _FormTestAppState createState() => _FormTestAppState();
 }
@@ -67,7 +73,9 @@ class _FormTestAppState extends State<FormTestApp>
       );
 }
 
-/// We are going to send the results here
+/// Form Results Callback
+/// 
+/// Show the results in a Dialog
 void resultsCallback(Map<String, String> results) => showDialog<void>(
     context: _scaffoldKey.currentContext,
     builder: (context) => Padding(
