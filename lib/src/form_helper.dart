@@ -260,6 +260,11 @@ class FormHelper extends ChangeNotifier {
   /// Get's the Widget for a name
   /// "submit" is a special case
   Widget getWidget(String name) {
+    if (name == "submit") {
+      return RaisedButton(
+          onPressed: submitForm, child: Text(submissionButtonText));
+    }
+
     switch (_getFieldSpec(name).type) {
       case FieldType.text:
         return _TextField._(formHelper: this, name: name);
@@ -267,11 +272,6 @@ class FormHelper extends ChangeNotifier {
         return _RadioButton(formHelper: this, name: name);
       case FieldType.checkbox:
         return _CheckBox(formHelper: this, name: name);
-    }
-
-    if (name == "submit") {
-      return RaisedButton(
-          onPressed: submitForm, child: Text(submissionButtonText));
     }
 
     return const Text("Uknown Type");
