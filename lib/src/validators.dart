@@ -1,4 +1,9 @@
-typedef validator = String Function(String input, {String defaultOutput});
+import 'package:flutter/widgets.dart';
+
+import '../form_helper.dart';
+
+typedef validator = String Function(FormHelper helper, String input,
+    {String defaultOutput});
 
 ///
 /// Validators
@@ -12,21 +17,28 @@ typedef validator = String Function(String input, {String defaultOutput});
 /// Composes a list of validators
 ///
 /// They'll apply in order, only one will pass it's output through
-String compositeValidator(List<validator> validators, String input) =>
+String compositeValidator(
+        List<validator> validators, FormHelper helper, String input) =>
     input != null && input.isNotEmpty
-        ? validators.fold(null, (output, v) => v(input, defaultOutput: output))
+        ? validators.fold(
+            null, (output, v) => v(helper, input, defaultOutput: output))
         : null;
 
 /// Validate a form is a certain length
 ///
-String lengthValidator(String input,
-        {int minLength = 3, int maxLength = 100000, String defaultOutput}) =>
+String lengthValidator(
+  FormHelper helper,
+  String input, {
+  int minLength = 3,
+  int maxLength = 100000,
+  String defaultOutput,
+}) =>
     input == null || (input.length < minLength || input.length > maxLength)
         ? "$minLength Characters or more Required"
         : defaultOutput;
 
 /// Does not like when no spaces are available
-String spaceCountValidator(String input,
+String spaceCountValidator(FormHelper helper, String input,
         {String defaultOutput,
         int count = 0,
         String message = "No Spaces Allowed"}) =>
@@ -35,19 +47,21 @@ String spaceCountValidator(String input,
         : defaultOutput;
 
 /// Validates an email
-String emailValidator(String input, {String defaultOutput}) =>
+String emailValidator(FormHelper helper, String input,
+        {String defaultOutput}) =>
     input == null || !_emailPattern.hasMatch(input)
         ? "Please enter a email"
         : defaultOutput;
 
 /// Validates an email
-String urlValidator(String input, {String defaultOutput}) =>
+String urlValidator(FormHelper helper, String input, {String defaultOutput}) =>
     input == null || !_urlPattern.hasMatch(input)
         ? "Please enter a URL"
         : defaultOutput;
 
 /// Validates that the value parses to double
-String doubleValidator(String input, {String defaultOutput}) {
+String doubleValidator(FormHelper helper, String input,
+    {String defaultOutput}) {
   try {
     double.parse(input);
   } on Exception {
@@ -57,7 +71,7 @@ String doubleValidator(String input, {String defaultOutput}) {
 }
 
 /// Validates that the value parses to an int
-String intValidator(String input, {String defaultOutput}) {
+String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   try {
     double.parse(input);
   } on Exception {

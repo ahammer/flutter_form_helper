@@ -110,7 +110,8 @@ class FormHelper extends ChangeNotifier {
   int get validationErrors => fields.fold(
       0,
       (sum, field) =>
-          compositeValidator(field.validators, _getValue(field.name)) == null
+          compositeValidator(field.validators, this, _getValue(field.name)) ==
+                  null
               ? sum
               : sum + 1);
 
@@ -172,6 +173,11 @@ class FormHelper extends ChangeNotifier {
   /// It'll redirect you to required fields or to fix errors
   /// before submitting
   void submitForm() {
+    if (allowWithErrors && onSubmitted != null) {    
+      onSubmitted(values);
+      return;    
+    }
+
     if (stillRequired > 0) {
       _focusOnFirstRemaining();
       return;
@@ -201,7 +207,8 @@ class FormHelper extends ChangeNotifier {
   /// Used when user taps "submit" with errors detected in input
   void _focusOnFirstError() {
     final field = fields.firstWhere((field) =>
-        compositeValidator(field.validators, _getValue(field.name)) != null);
+        compositeValidator(field.validators, this, _getValue(field.name)) !=
+        null);
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
     }
@@ -226,7 +233,9 @@ class FormHelper extends ChangeNotifier {
     values[name] = value;
     if (onChanged != null) {
       /// Todo allow errors
-      onChanged(values);
+      if (allowWithErrors || (validationErrors == 0 && stillRequired == 0)) {
+        onChanged(values);
+      }
     }
     notifyListeners();
   }
@@ -304,11 +313,10 @@ class _TextField extends StatelessWidget {
         onChanged: (value) => formHelper._onChange(name, value),
         onFieldSubmitted: (value) => formHelper._onSubmit(name),
         focusNode: formHelper._getFocusNode(name),
-        
         controller: formHelper._getTextEditingController(name),
         decoration: InputDecoration(
             labelText: fieldSpec.mandatory ? "* $label" : label,
-            errorText: compositeValidator(fieldSpec.validators,
+            errorText: compositeValidator(fieldSpec.validators, formHelper,
                 formHelper._getTextEditingController(name).text)));
   }
 }
