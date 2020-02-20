@@ -80,7 +80,7 @@ String doubleValidator(FormHelper helper, String input,
 /// Validates that text can be parsed to an Int
 String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   try {
-    double.parse(input);
+    int.parse(input);
   } on Exception {
     return "Enter a valid integer";
   }
