@@ -29,10 +29,15 @@ class FormTestApp extends StatefulWidget {
 class _FormTestAppState extends State<FormTestApp>
     with SingleTickerProviderStateMixin {
   TabController controller;
+  String onChangedString;
+
+  void setChangedString(String changedString) => setState(() {
+        onChangedString = changedString;
+      });
 
   @override
   void initState() {
-    controller = TabController(length: 3, vsync: this);
+    controller = TabController(length: 3, vsync: this);    
     super.initState();
   }
 
@@ -50,7 +55,7 @@ class _FormTestAppState extends State<FormTestApp>
             body: SafeArea(
                 child: Column(
               children: <Widget>[
-                TabBar(
+                TabBar(onTap: (_)=>setChangedString(null),
                   labelColor: Theme.of(context).colorScheme.primary,
                   controller: controller,
                   tabs: const <Widget>[
@@ -62,15 +67,25 @@ class _FormTestAppState extends State<FormTestApp>
                 Expanded(
                     child:
                         TabBarView(controller: controller, children: <Widget>[
-                  FormBuilder(
-                      form: sampleForm, onFormSubmitted: resultsCallback),
+                  /// Simple Form Builder Widget with default UI
                   FormBuilder(
                       form: sampleForm,
                       onFormSubmitted: resultsCallback,
+                      onFormChanged: (map) => setChangedString(map.toString())),
+
+                  /// Simple Form Builder with custom form UI
+                  FormBuilder(
+                      form: sampleForm,
+                      onFormSubmitted: resultsCallback,
+                      onFormChanged: (map) => setChangedString(map.toString()),
                       uiBuilder: customFormBuilder),
-                  ["Name", "Title", "Address"]
-                      .buildSimpleForm(onFormSubmitted: resultsCallback)
+
+                  /// Unvalidated form using ExtensionSyntax
+                  ["Name", "Title", "Address"].buildSimpleForm(
+                      onFormSubmitted: resultsCallback,
+                      onFormChanged: (map) => setChangedString(map.toString()))
                 ])),
+                Text(onChangedString ?? "No Results Yet")
               ],
             ))),
       );
