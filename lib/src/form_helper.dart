@@ -154,7 +154,9 @@ class FormHelper extends ChangeNotifier {
   Widget getWidget(String name) {
     if (name == "submit") {
       return RaisedButton(
-          onPressed: submitForm, child: Text(submissionButtonText));
+          key: const ValueKey("submit"),
+          onPressed: submitForm,
+          child: Text(submissionButtonText));
     }
 
     switch (_getFieldSpec(name).type) {
@@ -198,7 +200,7 @@ class FormHelper extends ChangeNotifier {
   /// Used when user taps "submit" without completing the form
   void _focusOnFirstRemaining() {
     final field = fields.firstWhere(
-        (field) => field.mandatory && getValue(field.name).isEmpty);
+        (field) => field.mandatory && (getValue(field.name)?.isEmpty ?? true));
     if (field != null) {
       _getFocusNode(field.name).requestFocus();
     }
@@ -230,7 +232,7 @@ class FormHelper extends ChangeNotifier {
       controllers[name];
 
   /// Called every time a value is changed
-  void _onChange(String name, String value) {
+  void onChange(String name, String value) {
     values[name] = value;
     if (onChanged != null) {
       /// Todo allow errors
@@ -261,12 +263,11 @@ class FormHelper extends ChangeNotifier {
   /// and default to a value = to the first option listed
   String getValue(String name) {
     final field = _getFieldSpec(name);
+
     if (field.type == FieldType.radio) {
-      if (!values.containsKey(field.group)) {
-        return _getRadioDefaultValue(field.group);
-      }
       return values[field.group];
     }
+
     return values[field.name];
   }
 
@@ -274,7 +275,7 @@ class FormHelper extends ChangeNotifier {
       fields.firstWhere((element) => element.group == group).value;
 
   void _applyRadioValue(String name, String value) =>
-      _onChange(_getFieldSpec(name).group, value);
+      onChange(_getFieldSpec(name).group, value);
 
   void _toggleCheckbox(String name) {
     if (values.containsKey(name)) {
@@ -310,8 +311,9 @@ class _TextField extends StatelessWidget {
     final label = fieldSpec.label ?? name;
 
     return TextFormField(
+        key: ValueKey(name),
         obscureText: fieldSpec.obscureText,
-        onChanged: (value) => formHelper._onChange(name, value),
+        onChanged: (value) => formHelper.onChange(name, value),
         onFieldSubmitted: (value) => formHelper._onSubmit(name),
         focusNode: formHelper._getFocusNode(name),
         controller: formHelper._getTextEditingController(name),
@@ -333,6 +335,7 @@ class _RadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Radio<String>(
+      key: ValueKey(name),
       groupValue: formHelper._getFieldSpec(name).value,
       value: formHelper.getValue(name),
       focusNode: formHelper._getFocusNode(name),
@@ -351,6 +354,7 @@ class _CheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Checkbox(
+      key: ValueKey(name),
       focusNode: formHelper._getFocusNode(name),
       value: formHelper._isChecked(name),
       onChanged: (value) => formHelper._toggleCheckbox(name));

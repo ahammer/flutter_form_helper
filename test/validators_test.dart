@@ -1,4 +1,4 @@
-import 'package:flutter_form_helper/src/validators.dart';
+import 'package:quick_form/src/validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Field Validator Tests

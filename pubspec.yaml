@@ -1,5 +1,5 @@
-name: flutter_form_helper
-description: Helping you prototype and build flutter forms.
+name: quick_form
+description: For when you need a form and are lazy.
 
 version: 1.0.0
 
@@ -17,7 +17,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
+
   module:
     androidX: true
     androidPackage: com.example.flutter_form_helper
