@@ -19,7 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_form_helper:
+  quick_form:
     path: ../
 
 dev_dependencies:

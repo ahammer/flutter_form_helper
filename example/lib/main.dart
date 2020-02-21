@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_helper/form_helper.dart';
+import 'package:quick_form/form_helper.dart';
 import 'src/custom_form_builder.dart';
 import 'src/sample_form.dart';
 
@@ -32,7 +32,7 @@ class _FormTestAppState extends State<FormTestApp>
 
   @override
   void initState() {
-    controller = TabController(length: 2, vsync: this);
+    controller = TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -55,7 +55,8 @@ class _FormTestAppState extends State<FormTestApp>
                   controller: controller,
                   tabs: const <Widget>[
                     Tab(text: "Simple"),
-                    Tab(text: "Custom")
+                    Tab(text: "Custom"),
+                    Tab(text: "Ultra-Simple")
                   ],
                 ),
                 Expanded(
@@ -67,6 +68,8 @@ class _FormTestAppState extends State<FormTestApp>
                       form: sampleForm,
                       onFormSubmitted: resultsCallback,
                       uiBuilder: customFormBuilder),
+                  ["Name", "Title", "Address"]
+                      .buildSimpleForm(onFormSubmitted: resultsCallback)
                 ])),
               ],
             ))),
@@ -74,7 +77,7 @@ class _FormTestAppState extends State<FormTestApp>
 }
 
 /// Form Results Callback
-/// 
+///
 /// Show the results in a Dialog
 void resultsCallback(Map<String, String> results) => showDialog<void>(
     context: _scaffoldKey.currentContext,

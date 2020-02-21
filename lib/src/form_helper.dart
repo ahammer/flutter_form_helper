@@ -359,3 +359,18 @@ class _CheckBox extends StatelessWidget {
       value: formHelper._isChecked(name),
       onChanged: (value) => formHelper._toggleCheckbox(name));
 }
+
+/// Extensions on List<String> to help with building the ultimate simple form
+extension FormHelperExtension on List<String> {
+  /// Build Simple Form. It's got fields, none are required, none are validated
+  ///
+  /// ["title","name","email"].buildSimpleForm();
+  Widget buildSimpleForm(
+          {FormUiBuilder uiBuilder = scrollableSimpleForm,
+          FormResultsCallback onFormChanged,
+          FormResultsCallback onFormSubmitted}) =>
+      FormBuilder(
+          onFormChanged: onFormChanged,
+          onFormSubmitted: onFormSubmitted,
+          form: map((string) => Field(name: string)).toList());
+}

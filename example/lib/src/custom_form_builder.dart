@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_helper/form_helper.dart';
+import 'package:quick_form/form_helper.dart';
 
 /// This is a Custom Form function for SampleForm
 ///
@@ -48,12 +48,9 @@ Widget customFormBuilder(FormHelper helper, BuildContext context) => Column(
                             padding: const EdgeInsets.all(8),
                             child: Column(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text("Gender",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1),
+                                const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Text("Gender"),
                                 ),
                                 Row(
                                   mainAxisAlignment:

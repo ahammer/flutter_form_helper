@@ -1,4 +1,4 @@
-import 'package:flutter_form_helper/form_helper.dart';
+import 'package:quick_form/form_helper.dart';
 
 /// This is the Sample Form used on the main() page
 const sampleForm = <Field>[
