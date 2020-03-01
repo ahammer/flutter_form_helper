@@ -17,14 +17,15 @@ enum FieldType {
 class Field {
   /// Build a FieldSpec
   const Field(
-      {@required this.name,
-      this.validators = const [],
-      this.mandatory = false,
-      this.obscureText = false,
-      this.value = "",
-      this.group,
-      this.type = FieldType.text,
-      this.label});
+      {@required this.name,         // Name of this field
+      this.validators = const [],   // A list of validators
+      this.mandatory = false,       // Is this field mandatory?
+      this.obscureText = false,     // Password Field
+      this.value = "",              // Default Value
+      this.group,                   // Group (for Radio)
+      this.type = FieldType.text,   // FieldType (text/radio/checkbox)
+      this.label                    // Label to be displayed as hint
+      });
 
   /// The name of this field
   final String name;
@@ -361,7 +362,7 @@ class _CheckBox extends StatelessWidget {
 }
 
 /// Extensions on List<String> to help with building the ultimate simple form
-extension FormHelperExtension on List<String> {
+extension FormHelperStringListExtension on List<String> {
   /// Build Simple Form. It's got fields, none are required, none are validated
   ///
   /// ["title","name","email"].buildSimpleForm();
@@ -373,4 +374,18 @@ extension FormHelperExtension on List<String> {
           onFormChanged: onFormChanged,
           onFormSubmitted: onFormSubmitted,
           form: map((string) => Field(name: string)).toList());
+}
+
+/// Extensions on List<Field> to help with building the ultimate simple form
+
+extension FormHelperFieldListExtension on List<Field> {
+  /// Extension Syntax for building out of a List<Field>
+  Widget buildSimpleForm(
+          {FormUiBuilder uiBuilder = scrollableSimpleForm,
+          FormResultsCallback onFormChanged,
+          FormResultsCallback onFormSubmitted}) =>
+      FormBuilder(
+          onFormChanged: onFormChanged,
+          onFormSubmitted: onFormSubmitted,
+          form: this);
 }
