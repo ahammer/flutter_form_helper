@@ -1,4 +1,4 @@
-# flutter_form_helper
+# Flutter Form Helper
 Creates simple forms very quickly.
 
 ## Problem Statement
