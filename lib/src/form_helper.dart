@@ -389,6 +389,7 @@ extension FormHelperFieldListExtension on List<Field> {
           FormResultsCallback onFormChanged,
           FormResultsCallback onFormSubmitted}) =>
       FormBuilder(
+        uiBuilder: uiBuilder,
           onFormChanged: onFormChanged,
           onFormSubmitted: onFormSubmitted,
           form: this);

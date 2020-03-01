@@ -73,13 +73,13 @@ class _FormTestAppState extends State<FormTestApp>
                       onFormSubmitted: resultsCallback,
                       onFormChanged: (map) => setChangedString(map.toString())),
 
-                  /// Simple Form Builder with custom form UI
-                  FormBuilder(
-                      form: sampleForm,
+                  /// Simple Form Builder with custom form UI, Extension Syntax
+                  
+                  sampleForm.buildSimpleForm(                      
                       onFormSubmitted: resultsCallback,
                       onFormChanged: (map) => setChangedString(map.toString()),
                       uiBuilder: customFormBuilder),
-
+                      
                   /// Unvalidated form using ExtensionSyntax
                   ["Name", "Title", "Address"].buildSimpleForm(
                       onFormSubmitted: resultsCallback,
