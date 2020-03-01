@@ -38,12 +38,11 @@ void main() {
   });
 
   testWidgets("Integration Test of the Flutter Form", (tester) async {
-    Map<String, String> onChangedMap, onSubmittedMap;
+    Map<String, String> onSubmittedMap;
     await tester.pumpWidget(
       MaterialApp(
         home: FormBuilder(
           form: sampleForm,
-          onFormChanged: (map) => onChangedMap = map,
           onFormSubmitted: (map) => onSubmittedMap = map,
         ),
       ),

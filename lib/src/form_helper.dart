@@ -266,7 +266,11 @@ class FormHelper extends ChangeNotifier {
     final field = _getFieldSpec(name);
 
     if (field.type == FieldType.radio) {
-      return values[field.group];
+      if (values.containsKey(field.group)) {
+        return values[field.group];
+      } else {
+        return _getRadioDefaultValue(field.group);
+      }
     }
 
     return values[field.name];
