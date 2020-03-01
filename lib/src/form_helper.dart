@@ -119,7 +119,7 @@ class FormHelper extends ChangeNotifier {
   int get stillRequired => fields.fold(
       0,
       (sum, field) => field.mandatory
-          ? _getTextEditingController(field.name).text.isEmpty ? sum + 1 : sum
+          ? values[field.name]?.isEmpty ?? false ? sum + 1 : sum
           : sum);
 
   /// Returns auto-generated submission button text
@@ -154,7 +154,7 @@ class FormHelper extends ChangeNotifier {
   Widget getWidget(String name) {
     if (name == "submit") {
       return RaisedButton(
-          key: const ValueKey("submit"),
+          key: const Key("submit"),
           onPressed: submitForm,
           child: Text(submissionButtonText));
     }
@@ -311,7 +311,7 @@ class _TextField extends StatelessWidget {
     final label = fieldSpec.label ?? name;
 
     return TextFormField(
-        key: ValueKey(name),
+        key: Key(name),
         obscureText: fieldSpec.obscureText,
         onChanged: (value) => formHelper.onChange(name, value),
         onFieldSubmitted: (value) => formHelper._onSubmit(name),
@@ -335,7 +335,7 @@ class _RadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Radio<String>(
-      key: ValueKey(name),
+      key: Key(name),
       groupValue: formHelper._getFieldSpec(name).value,
       value: formHelper.getValue(name),
       focusNode: formHelper._getFocusNode(name),
@@ -354,7 +354,7 @@ class _CheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Checkbox(
-      key: ValueKey(name),
+      key: Key(name),
       focusNode: formHelper._getFocusNode(name),
       value: formHelper._isChecked(name),
       onChanged: (value) => formHelper._toggleCheckbox(name));

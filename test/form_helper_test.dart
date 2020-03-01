@@ -53,13 +53,21 @@ void main() {
     expect(find.text("Url"), findsOneWidget);
     expect(find.byKey(const ValueKey("age")), findsOneWidget);
 
-    await tester.enterText(find.byKey(const ValueKey("title")), "Test Title");
-    await tester.enterText(find.byKey(const ValueKey("age")), "34");
-    await tester.tap(find.byKey(const ValueKey("submit")));
-
-    expect(onSubmittedMap["age"], equals("34"));
+    await tester.tap(find.byKey(const Key("title")));
+    await tester.enterText(find.byKey(const Key("title")), "Test Title");
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    
 
     
+    await tester.tap(find.byKey(const Key("age")));
+    await tester.enterText(find.byKey(const Key("age")), "34");
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    
+
+
+    await tester.tap(find.byKey(const Key("submit")));
+    expect(onSubmittedMap["age"], equals("34"));
+    expect(onSubmittedMap["title"], equals("Test Title"));        
   });
 }
 
