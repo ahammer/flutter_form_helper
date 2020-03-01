@@ -9,6 +9,7 @@ windows/
 .sconsign.dblite
 .svn/
 
+*.iml
 *.swp
 profile
 
