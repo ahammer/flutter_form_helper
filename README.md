@@ -12,12 +12,13 @@ Flutter Form Helper
 
 From an array of field names (Strings only, no Validation)
 
-  ["Name", "Title", "Address"].buildSimpleForm(
+     ["Name", "Title", "Address"].buildSimpleForm(
                       onFormSubmitted: resultsCallback,
                       onFormChanged: onChanged)
 
 
 ## Reading Results
+
   Register onFormSubmitted and onFormChanged callbacks that will send a Map<String, String> for you to work with. Required fields and Validations must pass for these callbacks to be triggered. However you can disable validations from FormBuilder if necessary to trigger these methods every time they are pressed.
 
 ## Form Spec
@@ -26,6 +27,16 @@ The form is defined as a list of <Field> objects. They specify the type and vali
 
 Example: https://github.com/ahammer/flutter_form_helper/blob/master/example/lib/src/sample_form.dart
 
+    const Field(
+          {@required this.name,         // Name of this field
+          this.validators = const [],   // A list of validators
+          this.mandatory = false,       // Is this field mandatory?
+          this.obscureText = false,     // Password Field
+          this.value = "",              // Default Value
+          this.group,                   // Group (for Radio)
+          this.type = FieldType.text,   // FieldType (text/radio/checkbox)
+          this.label                    // Label to be displayed as hint
+          });
 
 ## Building your form
 
@@ -38,6 +49,7 @@ Extension Syntax
                       
 
 Widget Syntax
+
                   FormBuilder(
                       uiBuilder: customFormBuilder
                       form: sampleForm,
