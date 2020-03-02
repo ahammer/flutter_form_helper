@@ -112,7 +112,7 @@ packages:
   quick_form:
     dependency: "direct main"
     description:
-      path: ".."
+      path: "..\\quick_form"
       relative: true
     source: path
     version: "1.0.0"

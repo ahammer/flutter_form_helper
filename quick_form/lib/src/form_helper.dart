@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../form_helper.dart';
+import '../quick_form.dart';
 
 /// The types of fields we support
 enum FieldType {

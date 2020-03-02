@@ -1,4 +1,4 @@
-import '../form_helper.dart';
+import '../quick_form.dart';
 
 /// Composite Validator
 /// 

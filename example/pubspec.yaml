@@ -20,7 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   quick_form:
-    path: ../
+    path: ../quick_form
 
 dev_dependencies:
   flutter_test:

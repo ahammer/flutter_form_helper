@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quick_form/form_helper.dart';
+import 'package:quick_form/quick_form.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
