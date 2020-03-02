@@ -16,6 +16,14 @@ From an array of field names (Strings only, no Validation)
                       onFormSubmitted: resultsCallback,
                       onFormChanged: onChanged)
 
+## Example
+- Main with 3 Forms and Tabs
+- OnChange and OnSubmit wired up
+
+| Basic | Custom | Simple |
+| ------ | ------ | ----- |
+| ![Basic Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/1.png) | ![Custom Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/2.png) | ![Simple Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/3.png) |
+
 
 ## Reading Results
 
