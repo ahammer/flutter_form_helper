@@ -10,7 +10,7 @@ The goal was to just define the fields in the form and have it wire up the focus
 
 | Basic | Custom | Simple |
 | ------ | ------ | ----- |
-| ![Basic Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/1.png) | ![Custom Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/2.png) | ![Simple Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/example/screenshots/3.png) |
+| ![Basic Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/quick_form/example/screenshots/1.png) | ![Custom Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/quick_form/example/screenshots/2.png) | ![Simple Form](https://raw.githubusercontent.com/ahammer/flutter_form_helper/master/quick_form/example/screenshots/3.png) |
 
 
 ## Reading Results
@@ -21,7 +21,7 @@ The goal was to just define the fields in the form and have it wire up the focus
 
 The form is defined as a list of <Field> objects. They specify the type and validators used by the field. This list can be fed to FormBuilder to build the form.
 
-Example: https://github.com/ahammer/flutter_form_helper/blob/master/example/lib/src/sample_form.dart
+Example: https://github.com/ahammer/flutter_form_helper/blob/master/quick_form/example/lib/src/sample_form.dart
 
     const Field(
           {@required this.name,         // Name of this field
