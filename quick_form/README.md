@@ -3,15 +3,6 @@ Creates simple forms very quickly.
 
 The goal was to just define the fields in the form and have it wire up the focus nodes, validation, callbacks and give you a Map with the form data. It's created for basic forms and prototyping use, but I will be using it in my own projects and will add features as I go.
 
-## Solution
-
-Flutter Form Helper
-
-From an array of field names (Strings only, no Validation)
-
-     ["Name", "Title", "Address"].buildSimpleForm(
-                      onFormSubmitted: resultsCallback,
-                      onFormChanged: onChanged)
 
 ## Example
 - Main with 3 Forms and Tabs
@@ -61,6 +52,12 @@ Widget Syntax
                       onFormSubmitted: resultsCallback,
                       onFormChanged: (map) => setChangedString(map.toString())),
 
+
+Or inline from a list of field names.
+     
+     ["Name", "Title", "Address"].buildSimpleForm(
+                      onFormSubmitted: resultsCallback,
+                      onFormChanged: onChanged)
 
 You can provide a UI Builder, or use the Built in one that will just build a form in a scrollable view with a bottom below.
 
