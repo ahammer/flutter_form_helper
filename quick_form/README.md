@@ -1,10 +1,7 @@
 # Flutter Form Helper
 Creates simple forms very quickly.
 
-## Problem Statement
-Creating forms is annoying, especially for quick mock ups.
-
-I just want to say what my form is and have it just work.
+The goal was to just define the fields in the form and have it wire up the focus nodes, validation, callbacks and give you a Map with the form data. It's created for basic forms and prototyping use, but I will be using it in my own projects and will add features as I go.
 
 ## Solution
 
