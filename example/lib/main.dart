@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_form/form_helper.dart';
+import 'package:quick_form/quick_form.dart';
 import 'src/custom_form_builder.dart';
 import 'src/sample_form.dart';
 
