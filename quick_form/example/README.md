@@ -1,16 +1,17 @@
 # example
 
-A new Flutter project.
+Example of the Quick_Form
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Clone the repo
 
-A few resources to get you started if this is your first Flutter project:
+Flutter Run
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Where things are located
+
+- sample_form.dart contains an example form
+- custom_form_builder.dart contains a customized form UI
+- main.dart manages the 3 tabs and shows various use cases
+
