@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quick_form/form_helper.dart';
+import 'package:quick_form/quick_form.dart';
 
 /// This is a Custom Form function for SampleForm
 ///

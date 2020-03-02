@@ -1,7 +1,7 @@
 import '../quick_form.dart';
 
 /// Composite Validator
-/// 
+///
 /// Composes and folds together multiple validators
 /// Applies the list of Validators in order
 String compositeValidator(
@@ -10,7 +10,6 @@ String compositeValidator(
         ? validators.fold(
             null, (output, v) => v(helper, input, defaultOutput: output))
         : null;
-
 
 /// Length Validator
 ///
@@ -27,9 +26,8 @@ String lengthValidator(
         ? "$minLength characters or more Required"
         : defaultOutput;
 
-
 /// Space Count Validator
-/// 
+///
 /// Ensures the correct amount of spaces in a string
 /// By default, no spaces, but can be configured to allow
 /// as many words as you want.
@@ -41,9 +39,8 @@ String spaceCountValidator(FormHelper helper, String input,
         ? message
         : defaultOutput;
 
-
 /// Email Validator
-/// 
+///
 /// Validates an email address against a regex
 String emailValidator(FormHelper helper, String input,
         {String defaultOutput}) =>
@@ -51,18 +48,16 @@ String emailValidator(FormHelper helper, String input,
         ? "Please enter a email"
         : defaultOutput;
 
-
 /// URL Validator
-/// 
+///
 /// Validates that a URL was entered correctly
 String urlValidator(FormHelper helper, String input, {String defaultOutput}) =>
     input == null || !_urlPattern.hasMatch(input)
         ? "Please enter a URL"
         : defaultOutput;
 
-
 /// Double Validator
-/// 
+///
 /// Validates that text can be parsed to a double
 String doubleValidator(FormHelper helper, String input,
     {String defaultOutput}) {
@@ -74,9 +69,8 @@ String doubleValidator(FormHelper helper, String input,
   return defaultOutput;
 }
 
-
 /// Int Validator
-/// 
+///
 /// Validates that text can be parsed to an Int
 String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   try {
@@ -86,7 +80,6 @@ String intValidator(FormHelper helper, String input, {String defaultOutput}) {
   }
   return defaultOutput;
 }
-
 
 /// Regex Patterns for URL & Email
 final _urlPattern =

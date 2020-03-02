@@ -70,7 +70,7 @@ class _FormBuilderState extends State<FormBuilder> {
 /// This is the default "debug" form
 ///
 /// It can be used to rapidly generate a form, and is the default.
-/// 
+///
 /// It's assumed you'll implement your own form however.
 ///
 Widget scrollableSimpleForm(FormHelper helper, BuildContext context) => Column(

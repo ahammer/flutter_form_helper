@@ -17,14 +17,14 @@ enum FieldType {
 class Field {
   /// Build a FieldSpec
   const Field(
-      {@required this.name,         // Name of this field
-      this.validators = const [],   // A list of validators
-      this.mandatory = false,       // Is this field mandatory?
-      this.obscureText = false,     // Password Field
-      this.value = "",              // Default Value
-      this.group,                   // Group (for Radio)
-      this.type = FieldType.text,   // FieldType (text/radio/checkbox)
-      this.label                    // Label to be displayed as hint
+      {@required this.name, // Name of this field
+      this.validators = const [], // A list of validators
+      this.mandatory = false, // Is this field mandatory?
+      this.obscureText = false, // Password Field
+      this.value = "", // Default Value
+      this.group, // Group (for Radio)
+      this.type = FieldType.text, // FieldType (text/radio/checkbox)
+      this.label // Label to be displayed as hint
       });
 
   /// The name of this field
@@ -389,7 +389,7 @@ extension FormHelperFieldListExtension on List<Field> {
           FormResultsCallback onFormChanged,
           FormResultsCallback onFormSubmitted}) =>
       FormBuilder(
-        uiBuilder: uiBuilder,
+          uiBuilder: uiBuilder,
           onFormChanged: onFormChanged,
           onFormSubmitted: onFormSubmitted,
           form: this);

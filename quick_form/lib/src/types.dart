@@ -3,12 +3,11 @@ import 'package:flutter/widgets.dart';
 import '../quick_form.dart';
 
 /// Form UI Builder
-/// 
+///
 /// Define functions like this to build a form and access the FormHelper
 /// to get the widgets
 typedef FormUiBuilder = Widget Function(
-    FormHelper helper, 
-    BuildContext context);
+    FormHelper helper, BuildContext context);
 
 /// Form Results Callback
 ///
