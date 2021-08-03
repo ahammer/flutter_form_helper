@@ -1,3 +1,7 @@
+!DISCONTINUED
+
+At least for now. If someone want's to make a null-safety PR, I'll bring it back.
+
 # Quick Form
 
 Create forms quickly 
